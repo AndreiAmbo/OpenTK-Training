@@ -1,4 +1,5 @@
-﻿namespace OpenGLDemo
+﻿
+namespace OpenGLDemo
 {
     public class Program
     {
@@ -8,6 +9,7 @@
             {
                 game.Run();
             }
+
         }
     }
 }
