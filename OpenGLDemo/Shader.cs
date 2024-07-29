@@ -1,68 +1,81 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using System;
+using System.IO;
+using System.Text;
+using System.Collections.Generic;
+using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 
-namespace OpenGLDemo
+namespace LearnOpenTK.Common
 {
+    // A simple class meant to help create shaders.
     public class Shader
     {
-        int handle;
-        private bool disposedValue = false;
+        public readonly int Handle;
 
-
-        public int Handle { get => handle; }
-        public Shader(string vertexPath, string fragmentPath) 
+        private readonly Dictionary<string, int> uniformLocations;
+        public Shader(string vertPath, string fragPath)
         {
-            int vertexShader;
-            int fragmentShader;
+            var shaderSource = File.ReadAllText(vertPath);
 
-            // load source code from shader files
-            string vertexShaderSource = File.ReadAllText(vertexPath);
-            string fragmentShaderSource = File.ReadAllText(fragmentPath);
+            var vertexShader = GL.CreateShader(ShaderType.VertexShader);
 
+            GL.ShaderSource(vertexShader, shaderSource);
 
-            // Generate our shaders and bind the source code to the shaders
-            vertexShader = GL.CreateShader(ShaderType.VertexShader);
-            GL.ShaderSource(vertexShader, vertexShaderSource);
+            CompileShader(vertexShader);
 
-            fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
-            GL.ShaderSource(fragmentShader, fragmentShaderSource);
+            shaderSource = File.ReadAllText(fragPath);
+            var fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
+            GL.ShaderSource(fragmentShader, shaderSource);
+            CompileShader(fragmentShader);
 
-            // Compile shaders and check for errors
-            GL.CompileShader(vertexShader);
-
-            GL.GetShader(vertexShader, ShaderParameter.CompileStatus, out int vertex);
-            if (vertex == 0)
-            {
-                string infoLog = GL.GetShaderInfoLog(vertexShader);
-                Console.WriteLine(infoLog);
-            }
-
-            GL.CompileShader(fragmentShader);
-
-            GL.GetShader(fragmentShader, ShaderParameter.CompileStatus, out int fragment);
-            if (fragment == 0)
-            {
-                string infoLog = GL.GetShaderInfoLog(fragmentShader);
-                Console.WriteLine(infoLog);
-            }
-
-            handle = GL.CreateProgram();
+            Handle = GL.CreateProgram();
 
             GL.AttachShader(Handle, vertexShader);
             GL.AttachShader(Handle, fragmentShader);
 
-            GL.LinkProgram(Handle);
-
-            GL.GetProgram(Handle, GetProgramParameterName.LinkStatus, out int success);
-            if (success == 0)
-            {
-                string infoLog = GL.GetProgramInfoLog(Handle);
-                Console.WriteLine(infoLog);
-            }
+            LinkProgram(Handle);
 
             GL.DetachShader(Handle, vertexShader);
             GL.DetachShader(Handle, fragmentShader);
             GL.DeleteShader(fragmentShader);
             GL.DeleteShader(vertexShader);
+
+            GL.GetProgram(Handle, GetProgramParameterName.ActiveUniforms, out var numberOfUniforms);
+
+            uniformLocations = new Dictionary<string, int>();
+
+            // Loop over all the uniforms,
+            for (var i = 0; i < numberOfUniforms; i++)
+            {
+                var key = GL.GetActiveUniform(Handle, i, out _, out _);
+
+                var location = GL.GetUniformLocation(Handle, key);
+
+                uniformLocations.Add(key, location);
+            }
+        }
+
+        private static void CompileShader(int shader)
+        {
+            GL.CompileShader(shader);
+
+            GL.GetShader(shader, ShaderParameter.CompileStatus, out var code);
+            if (code != (int)All.True)
+            {
+                var infoLog = GL.GetShaderInfoLog(shader);
+                throw new Exception($"Error occurred whilst compiling Shader({shader}).\n\n{infoLog}");
+            }
+        }
+
+        private static void LinkProgram(int program)
+        {
+            GL.LinkProgram(program);
+
+            GL.GetProgram(program, GetProgramParameterName.LinkStatus, out var code);
+            if (code != (int)All.True)
+            {
+                throw new Exception($"Error occurred whilst linking Program({program})");
+            }
         }
 
         public void Use()
@@ -70,41 +83,31 @@ namespace OpenGLDemo
             GL.UseProgram(Handle);
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!disposedValue)
-            {
-                GL.DeleteProgram(Handle);
-
-                disposedValue = true;
-            }
-        }
-
-        ~Shader()
-        {
-            if (disposedValue == false)
-            {
-                Console.WriteLine("GPU Resource leak! Did you forget to call Dispose()?");
-            }
-        }
-
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
         public int GetAttribLocation(string attribName)
         {
             return GL.GetAttribLocation(Handle, attribName);
         }
 
-        public void SetInt(string name, int value)
+        public void SetInt(string name, int data)
         {
-            int location = GL.GetUniformLocation(Handle, name);
+            GL.UseProgram(Handle);
+            GL.Uniform1(uniformLocations[name], data);
+        }
+        public void SetFloat(string name, float data)
+        {
+            GL.UseProgram(Handle);
+            GL.Uniform1(uniformLocations[name], data);
+        }
+        public void SetMatrix4(string name, Matrix4 data)
+        {
+            GL.UseProgram(Handle);
+            GL.UniformMatrix4(uniformLocations[name], true, ref data);
+        }
 
-            GL.Uniform1(location, value);
+        public void SetVector3(string name, Vector3 data)
+        {
+            GL.UseProgram(Handle);
+            GL.Uniform3(uniformLocations[name], data);
         }
     }
 }
