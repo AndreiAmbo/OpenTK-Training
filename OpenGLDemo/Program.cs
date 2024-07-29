@@ -9,7 +9,6 @@ namespace OpenGLDemo
             {
                 game.Run();
             }
-
         }
     }
 }

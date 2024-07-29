@@ -4,9 +4,11 @@ namespace OpenGLDemo
 {
     public class Shader
     {
-        int Handle;
+        int handle;
         private bool disposedValue = false;
 
+
+        public int Handle { get => handle; }
         public Shader(string vertexPath, string fragmentPath) 
         {
             int vertexShader;
@@ -43,7 +45,7 @@ namespace OpenGLDemo
                 Console.WriteLine(infoLog);
             }
 
-            Handle = GL.CreateProgram();
+            handle = GL.CreateProgram();
 
             GL.AttachShader(Handle, vertexShader);
             GL.AttachShader(Handle, fragmentShader);
