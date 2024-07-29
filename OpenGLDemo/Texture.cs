@@ -7,10 +7,14 @@ using System.IO;
 
 namespace LearnOpenTK.Common
 {
-    // A helper class, much like Shader, meant to simplify loading textures.
     public class Texture
     {
         public readonly int Handle;
+
+        public Texture(int glHandle)
+        {
+            Handle = glHandle;
+        }
 
         public static Texture LoadFromFile(string path)
         {
@@ -37,12 +41,7 @@ namespace LearnOpenTK.Common
             return new Texture(handle);
         }
 
-        public Texture(int glHandle)
-        {
-            Handle = glHandle;
-        }
-
-        public void Use(TextureUnit unit)
+        public void Use(TextureUnit unit = TextureUnit.Texture0)
         {
             GL.ActiveTexture(unit);
             GL.BindTexture(TextureTarget.Texture2D, Handle);

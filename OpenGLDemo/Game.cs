@@ -3,14 +3,11 @@ using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using System.Diagnostics;
 
 namespace OpenGLDemo
 {
     public class Game : GameWindow
     {
-        private Stopwatch timer;
-
         private float[] Vertices =
         {
            //Position          Texture coordinates
@@ -20,7 +17,7 @@ namespace OpenGLDemo
             -0.5f,  0.5f, 0.0f, 0.0f, 1.0f  // top left
         };
 
-        private readonly uint[] _indices =
+        private readonly uint[] indices =
         {
             0, 1, 3,
             1, 2, 3
@@ -31,6 +28,7 @@ namespace OpenGLDemo
         private int VertexArrayObject;
         private Shader Shader;
         private Texture texture;
+        private Texture secondTexture;
 
 
         public Game(int width, int height, string title) : base(GameWindowSettings.Default, new NativeWindowSettings() { Size = (width, height), Title = title })
@@ -67,7 +65,7 @@ namespace OpenGLDemo
 
             ElementBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Length * sizeof(uint), _indices, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
 
             Shader = new Shader("Shaders/shader.vert", "Shaders/shader.frag");
             Shader.Use();
@@ -82,6 +80,13 @@ namespace OpenGLDemo
 
             texture = Texture.LoadFromFile("Resources/container.png");
             texture.Use(TextureUnit.Texture0);
+
+            secondTexture = Texture.LoadFromFile("Resources/awesomeface.png");
+            secondTexture.Use(TextureUnit.Texture1);
+
+
+            Shader.SetInt("texture0", 0);
+            Shader.SetInt("texture1", 1);
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -93,13 +98,11 @@ namespace OpenGLDemo
             GL.BindVertexArray(VertexArrayObject);
 
             texture.Use(TextureUnit.Texture0);
+            secondTexture.Use(TextureUnit.Texture1);
             Shader.Use();
 
-            GL.DrawElements(PrimitiveType.Triangles, _indices.Length, DrawElementsType.UnsignedInt, 0);
+            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
 
-            SwapBuffers();
-
-            RenderTriangle();
             SwapBuffers();
         }
 
