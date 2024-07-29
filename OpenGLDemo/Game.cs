@@ -12,9 +12,9 @@ namespace OpenGLDemo
 
         private readonly float[] Vertices =
         {
-             -0.5f, -0.5f, 0.0f, // Bottom-left vertex
-             0.5f, -0.5f, 0.0f, // Bottom-right vertex
-             0.0f,  0.5f, 0.0f  // Top vertex
+             -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // Bottom-left vertex
+             0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,// Bottom-right vertex
+             0.0f,  0.5f, 0.0f,  0.0f, 0.0f, 1.0f // Top vertex
         };
 
 
@@ -56,8 +56,12 @@ namespace OpenGLDemo
             VertexArrayObject = GL.GenVertexArray();
             GL.BindVertexArray(VertexArrayObject);
 
-            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
+
+            GL.VertexAttribPointer(1, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 3 * sizeof(float));
+            GL.EnableVertexAttribArray(1);
+
 
             GL.GetInteger(GetPName.MaxVertexAttribs, out int maxAttributeCount);
             Debug.WriteLine($"Maximum number of vertex attributes supported: {maxAttributeCount}");
