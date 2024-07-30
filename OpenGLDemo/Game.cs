@@ -9,49 +9,50 @@ namespace OpenGLDemo
 {
     public class Game : GameWindow
     {
-        float[] vertices = 
-        {
-                -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
-                 0.5f, -0.5f, -0.5f,  1.0f, 0.0f,
-                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,
+        private readonly float[] vertices =
+ {
+            // Position
+            -0.5f, -0.5f, -0.5f, // Front face
+             0.5f, -0.5f, -0.5f,
+             0.5f,  0.5f, -0.5f,
+             0.5f,  0.5f, -0.5f,
+            -0.5f,  0.5f, -0.5f,
+            -0.5f, -0.5f, -0.5f,
 
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-                 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-                 0.5f,  0.5f,  0.5f,  1.0f, 1.0f,
-                -0.5f,  0.5f,  0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
+            -0.5f, -0.5f,  0.5f, // Back face
+             0.5f, -0.5f,  0.5f,
+             0.5f,  0.5f,  0.5f,
+             0.5f,  0.5f,  0.5f,
+            -0.5f,  0.5f,  0.5f,
+            -0.5f, -0.5f,  0.5f,
 
-                -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+            -0.5f,  0.5f,  0.5f, // Left face
+            -0.5f,  0.5f, -0.5f,
+            -0.5f, -0.5f, -0.5f,
+            -0.5f, -0.5f, -0.5f,
+            -0.5f, -0.5f,  0.5f,
+            -0.5f,  0.5f,  0.5f,
 
-                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                 0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                 0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
+             0.5f,  0.5f,  0.5f, // Right face
+             0.5f,  0.5f, -0.5f,
+             0.5f, -0.5f, -0.5f,
+             0.5f, -0.5f, -0.5f,
+             0.5f, -0.5f,  0.5f,
+             0.5f,  0.5f,  0.5f,
 
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
-                 0.5f, -0.5f, -0.5f,  1.0f, 1.0f,
-                 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-                 0.5f, -0.5f,  0.5f,  1.0f, 0.0f,
-                -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,
-                -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,
+            -0.5f, -0.5f, -0.5f, // Bottom face
+             0.5f, -0.5f, -0.5f,
+             0.5f, -0.5f,  0.5f,
+             0.5f, -0.5f,  0.5f,
+            -0.5f, -0.5f,  0.5f,
+            -0.5f, -0.5f, -0.5f,
 
-                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f,
-                 0.5f,  0.5f, -0.5f,  1.0f, 1.0f,
-                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                 0.5f,  0.5f,  0.5f,  1.0f, 0.0f,
-                -0.5f,  0.5f,  0.5f,  0.0f, 0.0f,
-                -0.5f,  0.5f, -0.5f,  0.0f, 1.0f
+            -0.5f,  0.5f, -0.5f, // Top face
+             0.5f,  0.5f, -0.5f,
+             0.5f,  0.5f,  0.5f,
+             0.5f,  0.5f,  0.5f,
+            -0.5f,  0.5f,  0.5f,
+            -0.5f,  0.5f, -0.5f
         };
 
         // indices for triangles
@@ -60,6 +61,14 @@ namespace OpenGLDemo
             0, 1, 3,
             1, 2, 3
         };
+
+        private readonly Vector3 lightPos = new Vector3(1.2f, 1.0f, 2.0f);
+        private int vaoModel;
+        private int vaoLamp;
+
+        private Shader lampShader;
+        private Shader lightingShader;
+
 
         // Identifiers for vertex and element buffers
         private int elementBufferObject;
@@ -99,41 +108,34 @@ namespace OpenGLDemo
             GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferObject);
             GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
 
-            // Create and bind element buffer for indices
-            elementBufferObject = GL.GenBuffer();
-            GL.BindBuffer(BufferTarget.ElementArrayBuffer, elementBufferObject);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
+            
+            lightingShader = new Shader("Shaders/shader.vert", "Shaders/lighting.frag");
+            lampShader = new Shader("Shaders/shader.vert", "Shaders/shader.frag");
 
-            // Create and use shader
-            shader = new Shader("Shaders/shader.vert", "Shaders/shader.frag");
-            shader.Use();
+            {
+                // Initialize the vao for the model
+                vaoModel = GL.GenVertexArray();
+                GL.BindVertexArray(vaoModel);
 
-            // Configure attributes for position vertex
-            var vertexLocation = shader.GetAttribLocation("aPosition");
-            GL.EnableVertexAttribArray(vertexLocation);
-            GL.VertexAttribPointer(vertexLocation, 3, VertexAttribPointerType.Float, false, 5 * sizeof(float), 0);
+                var vertexLoc = lightingShader.GetAttribLocation("aPos");
+                GL.EnableVertexAttribArray(vertexLoc);
+                GL.VertexAttribPointer(vertexLoc, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            }
 
-            // Configure attributes for texture vertex
-            var texCoordLocation = shader.GetAttribLocation("aTexCoord");
-            GL.EnableVertexAttribArray(texCoordLocation);
-            GL.VertexAttribPointer(texCoordLocation, 2, VertexAttribPointerType.Float, false, 5 * sizeof(float), 3 * sizeof(float));
+            {
+                // Initialize the vao for the lamp, this is mostly the same as the code for the model cube
+                vaoLamp = GL.GenVertexArray();
+                GL.BindVertexArray(vaoLamp);
 
-            // Load and use textures
-            texture = Texture.LoadFromFile("Resources/container.png");
-            texture.Use(TextureUnit.Texture1);
-
-            secondTexture = Texture.LoadFromFile("Resources/awesomeface.png");
-            secondTexture.Use(TextureUnit.Texture0);
-
-            // Set texture units for shader
-            shader.SetInt("texture0", 1);
-            shader.SetInt("texture1", 0);
+                // Set the vertex attributes (only position data for our lamp)
+                var vertexLoc = lampShader.GetAttribLocation("aPos");
+                GL.EnableVertexAttribArray(vertexLoc);
+                GL.VertexAttribPointer(vertexLoc, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+            }
 
             camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
 
-            // Set cursor invisible
             CursorState = CursorState.Grabbed;
-
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -147,16 +149,34 @@ namespace OpenGLDemo
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
             // Bind vertexArray object
-            GL.BindVertexArray(vertexArrayObject);
+            GL.BindVertexArray(vaoModel);
 
-            var model = Matrix4.Identity * Matrix4.CreateRotationX((float)MathHelper.DegreesToRadians(time));
-            shader!.SetMatrix4("model", model);
-            shader.SetMatrix4("view", camera!.GetViewMatrix());
-            shader.SetMatrix4("projection", camera.GetProjectionMatrix());
+            lightingShader.Use();
+
+            // Matrix4.Identity is used as the matrix, since we just want to draw it at 0, 0, 0
+            lightingShader.SetMatrix4("model", Matrix4.Identity);
+            lightingShader.SetMatrix4("view", camera!.GetViewMatrix());
+            lightingShader.SetMatrix4("projection", camera.GetProjectionMatrix());
+
+            lightingShader.SetVector3("objectColor", new Vector3(1.0f, 0.5f, 0.31f));
+            lightingShader.SetVector3("lightColor", new Vector3(1.0f, 1.0f, 1.0f));
 
             // Draw elements using indices
-            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
+
+            GL.BindVertexArray(vaoLamp);
+
+            lampShader.Use();
+
+            Matrix4 lampMatrix = Matrix4.CreateScale(0.2f); // We scale the lamp cube down a bit to make it less dominant
+            lampMatrix = lampMatrix * Matrix4.CreateTranslation(lightPos);
+
+            lampShader.SetMatrix4("model", lampMatrix);
+            lampShader.SetMatrix4("view", camera.GetViewMatrix());
+            lampShader.SetMatrix4("projection", camera.GetProjectionMatrix());
+
+            GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
+
 
             SwapBuffers();
         }
