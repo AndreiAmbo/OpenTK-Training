@@ -67,14 +67,15 @@ namespace OpenGLDemo
         private int vertexArrayObject;
 
         // Objects for shaders and textures
-        private Shader shader;
-        private Texture texture;
-        private Texture secondTexture;
+        private Shader? shader;
+        private Texture? texture;
+        private Texture? secondTexture;
 
-        // Variables for time and view matrix
+
+        private Camera? camera;
+        private bool firstMove = true;
+        private Vector2 lastPos;
         private double time;
-        private Matrix4 view;
-        private Matrix4 projection;
         public Game(int width, int height, string title) : base(GameWindowSettings.Default, new NativeWindowSettings() { Size = (width, height), Title = title })
         {
 
@@ -124,13 +125,15 @@ namespace OpenGLDemo
             secondTexture = Texture.LoadFromFile("Resources/awesomeface.png");
             secondTexture.Use(TextureUnit.Texture0);
 
-            // Set view and projection matrix
-            view = Matrix4.CreateTranslation(0.0f, 0.0f, -3.0f);
-            projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45f), Size.X / (float)Size.Y, 0.1f, 100.0f);
-
             // Set texture units for shader
             shader.SetInt("texture0", 1);
             shader.SetInt("texture1", 0);
+
+            camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
+
+            // Set cursor invisible
+            CursorState = CursorState.Grabbed;
+
         }
 
         protected override void OnRenderFrame(FrameEventArgs e)
@@ -146,18 +149,14 @@ namespace OpenGLDemo
             // Bind vertexArray object
             GL.BindVertexArray(vertexArrayObject);
 
-            // Create rotation matrix model
-            Matrix4 model = Matrix4.CreateRotationX((float)MathHelper.DegreesToRadians(time));
-
-            // Set matrixes in shader
-            shader.SetMatrix4("model", model);
-            shader.SetMatrix4("view", view);
-            shader.SetMatrix4("projection", projection);
+            var model = Matrix4.Identity * Matrix4.CreateRotationX((float)MathHelper.DegreesToRadians(time));
+            shader!.SetMatrix4("model", model);
+            shader.SetMatrix4("view", camera!.GetViewMatrix());
+            shader.SetMatrix4("projection", camera.GetProjectionMatrix());
 
             // Draw elements using indices
             GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
             GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
-
 
             SwapBuffers();
         }
@@ -166,16 +165,81 @@ namespace OpenGLDemo
         {
             base.OnUpdateFrame(e);
 
-            if (KeyboardState.IsKeyDown(Keys.Escape))
+            if (!IsFocused)
+            {
+                return;
+            }
+
+            var input = KeyboardState;
+
+            if (input.IsKeyDown(Keys.Escape))
             {
                 Close();
             }
+
+            const float cameraSpeed = 1.5f;
+            const float sensitivity = 0.2f;
+
+            if (input.IsKeyDown(Keys.W))
+            {
+                camera!.Position += camera.Front * cameraSpeed * (float)e.Time; // Forward
+            }
+
+            if (input.IsKeyDown(Keys.S))
+            {
+                camera!.Position -= camera.Front * cameraSpeed * (float)e.Time; // Backwards
+            }
+            if (input.IsKeyDown(Keys.A))
+            {
+                camera!.Position -= camera.Right * cameraSpeed * (float)e.Time; // Left
+            }
+            if (input.IsKeyDown(Keys.D))
+            {
+                camera!.Position += camera.Right * cameraSpeed * (float)e.Time; // Right
+            }
+            if (input.IsKeyDown(Keys.Space))
+            {
+                camera!.Position += camera.Up * cameraSpeed * (float)e.Time; // Up
+            }
+            if (input.IsKeyDown(Keys.LeftShift))
+            {
+                camera!.Position -= camera.Up * cameraSpeed * (float)e.Time; // Down
+            }
+
+            // Get the mouse state
+            var mouse = MouseState;
+
+            if (firstMove) // This bool variable is initially set to true.
+            {
+                lastPos = new Vector2(mouse.X, mouse.Y);
+                firstMove = false;
+            }
+            else
+            {
+                // Calculate the offset of the mouse position
+                var deltaX = mouse.X - lastPos.X;
+                var deltaY = mouse.Y - lastPos.Y;
+                lastPos = new Vector2(mouse.X, mouse.Y);
+
+                // Apply the camera pitch and yaw (we clamp the pitch in the camera class)
+                camera!.Yaw += deltaX * sensitivity;
+                camera.Pitch -= deltaY * sensitivity; // Reversed since y-coordinates range from bottom to top
+            }
+        }
+
+        protected override void OnMouseWheel(MouseWheelEventArgs e)
+        {
+            base.OnMouseWheel(e);
+
+            camera!.Fov -= e.OffsetY;
         }
 
         protected override void OnResize(ResizeEventArgs e)
         {
             base.OnResize(e);
             GL.Viewport(0, 0, Size.X, Size.Y);
+
+            camera!.AspectRatio = Size.X / (float)Size.Y;
         }
     }
 }
