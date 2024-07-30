@@ -7,7 +7,6 @@ using OpenTK.Mathematics;
 
 namespace LearnOpenTK.Common
 {
-    // A simple class meant to help create shaders.
     public class Shader
     {
         public readonly int Handle;
@@ -15,36 +14,34 @@ namespace LearnOpenTK.Common
         private readonly Dictionary<string, int> uniformLocations;
         public Shader(string vertPath, string fragPath)
         {
+            // load and compile vertex shader
             var shaderSource = File.ReadAllText(vertPath);
-
             var vertexShader = GL.CreateShader(ShaderType.VertexShader);
-
             GL.ShaderSource(vertexShader, shaderSource);
-
             CompileShader(vertexShader);
 
+            //load and compile fragment shader
             shaderSource = File.ReadAllText(fragPath);
             var fragmentShader = GL.CreateShader(ShaderType.FragmentShader);
             GL.ShaderSource(fragmentShader, shaderSource);
             CompileShader(fragmentShader);
 
+            // Create and attach shaders
             Handle = GL.CreateProgram();
-
             GL.AttachShader(Handle, vertexShader);
             GL.AttachShader(Handle, fragmentShader);
 
+            // link program and release shaders
             LinkProgram(Handle);
-
             GL.DetachShader(Handle, vertexShader);
             GL.DetachShader(Handle, fragmentShader);
             GL.DeleteShader(fragmentShader);
             GL.DeleteShader(vertexShader);
 
+            // Gain uniforms locations
             GL.GetProgram(Handle, GetProgramParameterName.ActiveUniforms, out var numberOfUniforms);
-
             uniformLocations = new Dictionary<string, int>();
 
-            // Loop over all the uniforms,
             for (var i = 0; i < numberOfUniforms; i++)
             {
                 var key = GL.GetActiveUniform(Handle, i, out _, out _);
