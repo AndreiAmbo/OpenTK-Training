@@ -5,7 +5,7 @@ using PixelFormat = OpenTK.Graphics.OpenGL4.PixelFormat;
 using StbImageSharp;
 using System.IO;
 
-namespace LearnOpenTK.Common
+namespace OpenGLDemo
 {
     public class Texture
     {

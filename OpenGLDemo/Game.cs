@@ -1,5 +1,4 @@
-﻿using LearnOpenTK.Common;
-using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
@@ -108,7 +107,7 @@ namespace OpenGLDemo
             GL.BindBuffer(BufferTarget.ArrayBuffer, vertexBufferObject);
             GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
 
-            
+
             lightingShader = new Shader("Shaders/shader.vert", "Shaders/lighting.frag");
             lampShader = new Shader("Shaders/shader.vert", "Shaders/shader.frag");
 
@@ -119,7 +118,7 @@ namespace OpenGLDemo
 
                 var vertexLoc = lightingShader.GetAttribLocation("aPos");
                 GL.EnableVertexAttribArray(vertexLoc);
-                GL.VertexAttribPointer(vertexLoc, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+                GL.VertexAttribPointer(vertexLoc, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
             }
 
             {
@@ -130,7 +129,7 @@ namespace OpenGLDemo
                 // Set the vertex attributes (only position data for our lamp)
                 var vertexLoc = lampShader.GetAttribLocation("aPos");
                 GL.EnableVertexAttribArray(vertexLoc);
-                GL.VertexAttribPointer(vertexLoc, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
+                GL.VertexAttribPointer(vertexLoc, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
             }
 
             camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
@@ -143,7 +142,7 @@ namespace OpenGLDemo
             base.OnRenderFrame(e);
 
             // Update time
-            time += 12.0 * e.Time;
+            time += 10.0 * e.Time;
 
             // Clear color and depth buffers
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
@@ -242,7 +241,7 @@ namespace OpenGLDemo
                 lastPos = new Vector2(mouse.X, mouse.Y);
 
                 // Apply the camera pitch and yaw (we clamp the pitch in the camera class)
-                camera!.Yaw += deltaX * sensitivity;
+                camera!.Yaw += deltaY * sensitivity;
                 camera.Pitch -= deltaY * sensitivity; // Reversed since y-coordinates range from bottom to top
             }
         }

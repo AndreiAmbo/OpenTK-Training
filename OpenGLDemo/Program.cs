@@ -1,5 +1,4 @@
-﻿
-namespace OpenGLDemo
+﻿namespace OpenGLDemo
 {
     public class Program
     {
