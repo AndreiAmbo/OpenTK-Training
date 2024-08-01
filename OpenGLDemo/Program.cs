@@ -4,7 +4,7 @@
     {
         public static void Main()
         {
-            using (Game game = new Game(800, 600, "LearnOpenTK"))
+            using (Game game = new Game(1280, 768, "LearnOpenTK"))
             {
                 game.Run();
             }

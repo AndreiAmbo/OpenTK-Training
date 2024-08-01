@@ -9,7 +9,7 @@ namespace OpenGLDemo
     public class Game : GameWindow
     {
         private readonly float[] vertices =
- {
+        {
             // Position
             -0.5f, -0.5f, -0.5f, // Front face
              0.5f, -0.5f, -0.5f,
@@ -65,8 +65,8 @@ namespace OpenGLDemo
         private int vaoModel;
         private int vaoLamp;
 
-        private Shader lampShader;
-        private Shader lightingShader;
+        private Shader? lampShader;
+        private Shader? lightingShader;
 
 
         // Identifiers for vertex and element buffers
@@ -83,10 +83,8 @@ namespace OpenGLDemo
         private Camera? camera;
         private bool firstMove = true;
         private Vector2 lastPos;
-        private double time;
         public Game(int width, int height, string title) : base(GameWindowSettings.Default, new NativeWindowSettings() { Size = (width, height), Title = title })
         {
-
         }
 
         protected override void OnLoad()
@@ -112,24 +110,22 @@ namespace OpenGLDemo
             lampShader = new Shader("Shaders/shader.vert", "Shaders/shader.frag");
 
             {
-                // Initialize the vao for the model
                 vaoModel = GL.GenVertexArray();
                 GL.BindVertexArray(vaoModel);
 
                 var vertexLoc = lightingShader.GetAttribLocation("aPos");
                 GL.EnableVertexAttribArray(vertexLoc);
-                GL.VertexAttribPointer(vertexLoc, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
+                GL.VertexAttribPointer(vertexLoc, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
             }
 
             {
-                // Initialize the vao for the lamp, this is mostly the same as the code for the model cube
                 vaoLamp = GL.GenVertexArray();
                 GL.BindVertexArray(vaoLamp);
 
                 // Set the vertex attributes (only position data for our lamp)
                 var vertexLoc = lampShader.GetAttribLocation("aPos");
                 GL.EnableVertexAttribArray(vertexLoc);
-                GL.VertexAttribPointer(vertexLoc, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
+                GL.VertexAttribPointer(vertexLoc, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
             }
 
             camera = new Camera(Vector3.UnitZ * 3, Size.X / (float)Size.Y);
@@ -141,33 +137,25 @@ namespace OpenGLDemo
         {
             base.OnRenderFrame(e);
 
-            // Update time
-            time += 10.0 * e.Time;
-
-            // Clear color and depth buffers
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
 
-            // Bind vertexArray object
             GL.BindVertexArray(vaoModel);
 
-            lightingShader.Use();
+            lightingShader!.Use();
 
-            // Matrix4.Identity is used as the matrix, since we just want to draw it at 0, 0, 0
             lightingShader.SetMatrix4("model", Matrix4.Identity);
             lightingShader.SetMatrix4("view", camera!.GetViewMatrix());
             lightingShader.SetMatrix4("projection", camera.GetProjectionMatrix());
 
-            lightingShader.SetVector3("objectColor", new Vector3(1.0f, 0.5f, 0.31f));
+            lightingShader.SetVector3("objectColor", new Vector3(1.0f, 0.5f, 1.0f));
             lightingShader.SetVector3("lightColor", new Vector3(1.0f, 1.0f, 1.0f));
 
-            // Draw elements using indices
             GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
-
             GL.BindVertexArray(vaoLamp);
 
-            lampShader.Use();
+            lampShader!.Use();
 
-            Matrix4 lampMatrix = Matrix4.CreateScale(0.2f); // We scale the lamp cube down a bit to make it less dominant
+            Matrix4 lampMatrix = Matrix4.CreateScale(0.2f);
             lampMatrix = lampMatrix * Matrix4.CreateTranslation(lightPos);
 
             lampShader.SetMatrix4("model", lampMatrix);
@@ -175,7 +163,6 @@ namespace OpenGLDemo
             lampShader.SetMatrix4("projection", camera.GetProjectionMatrix());
 
             GL.DrawArrays(PrimitiveType.Triangles, 0, 36);
-
 
             SwapBuffers();
         }
@@ -241,7 +228,7 @@ namespace OpenGLDemo
                 lastPos = new Vector2(mouse.X, mouse.Y);
 
                 // Apply the camera pitch and yaw (we clamp the pitch in the camera class)
-                camera!.Yaw += deltaY * sensitivity;
+                camera!.Yaw += deltaX * sensitivity;
                 camera.Pitch -= deltaY * sensitivity; // Reversed since y-coordinates range from bottom to top
             }
         }
